@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class GameController : MonoBehaviour
+public class FieldController : MonoBehaviour
 {
     [SerializeField] private Scrollbar widthBar, heightBar, speedBar;
     [SerializeField] private Button startButton, checkButton;
@@ -101,6 +101,7 @@ public class GameController : MonoBehaviour
         float speed = speedBar.GetComponent<Scrollbar>().value * 9 + 1;
         IEnumerator coroutine = WaitForSec(speed);
         StartCoroutine(coroutine);
+        
     }
     private IEnumerator WaitForSec(float waitTime)
     {
