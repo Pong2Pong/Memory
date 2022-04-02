@@ -549,6 +549,58 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 347321152}
   m_CullTransparentMesh: 1
+--- !u!1 &482962278
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 482962280}
+  - component: {fileID: 482962279}
+  m_Layer: 0
+  m_Name: GameController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &482962279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 482962278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7611d6c3a15b3094cb082c68ed31894a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  widthBar: {fileID: 2029684033}
+  heightBar: {fileID: 202947752}
+  speedBar: {fileID: 1310239898}
+  startButton: {fileID: 1537420812}
+  checkButton: {fileID: 637111569}
+  cell: {fileID: 2272656468427611559, guid: eeb7f7bed5b7f7d49a113ed60bb7486d, type: 3}
+  targetScale: 765
+  cellContainer: {fileID: 1135165108}
+  checkCellContainer: {fileID: 1342793249}
+--- !u!4 &482962280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 482962278}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.82685614, y: -1.035968, z: 1554.0901}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -985,7 +1037,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1135165109}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: CheckLevel
         m_Mode: 1
@@ -1599,35 +1651,13 @@ GameObject:
   m_Component:
   - component: {fileID: 1135165111}
   - component: {fileID: 1135165110}
-  - component: {fileID: 1135165109}
   m_Layer: 0
-  m_Name: Square
+  m_Name: CellContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1135165109
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1135165108}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7611d6c3a15b3094cb082c68ed31894a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  widthBar: {fileID: 2029684033}
-  heightBar: {fileID: 202947752}
-  speedBar: {fileID: 1310239898}
-  startButton: {fileID: 1537420812}
-  checkButton: {fileID: 637111569}
-  square: {fileID: 2272656468427611559, guid: eeb7f7bed5b7f7d49a113ed60bb7486d, type: 3}
-  targetScale: 765
-  squareContainer: {fileID: 64792639}
-  checkSquareContainer: {fileID: 1342793249}
 --- !u!212 &1135165110
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1707,7 +1737,7 @@ GameObject:
   - component: {fileID: 1207983100}
   - component: {fileID: 1207983099}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: PanelRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2109,7 +2139,7 @@ GameObject:
   - component: {fileID: 1342793252}
   - component: {fileID: 1342793251}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: PanelLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2327,7 +2357,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1135165109}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: StartLevel
         m_Mode: 1
@@ -2509,6 +2539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c0fea5106216a4eb31ea96ffe31d2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objWithGameController: {fileID: 1135165108}
 --- !u!4 &1719022841
 Transform:
   m_ObjectHideFlags: 0

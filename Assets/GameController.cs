@@ -8,15 +8,15 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] private Scrollbar widthBar, heightBar, speedBar;
     [SerializeField] private Button startButton, checkButton;
-    [SerializeField] private GameObject square;
+    [SerializeField] private GameObject cell;
     [SerializeField] private float targetScale;
-    [SerializeField] private GameObject squareContainer, checkSquareContainer;
-    private float fieldWidth, fieldHeight, offset;
-    private float cellSize;
+    [SerializeField] private GameObject cellContainer, checkCellContainer;
+    private float fieldWidth, fieldHeight, offset, cellSize;
     private int widthFieldNumber, heightFieldNumber;
     List<GameObject> cellsToSolve = new List<GameObject>();
     List<GameObject> cellsToDrag = new List<GameObject>();
-    List<string> numbersList = new List<string>();
+    List<string> usedNumbersToSolveList = new List<string>();
+    List<int> movedNumbersList = new List<int>();
 
 
     // Start is called before the first frame update
@@ -24,33 +24,26 @@ public class GameController : MonoBehaviour
     {
         widthBar.onValueChanged.AddListener((float val) => ScrollbarCallbackWidth(val));
         heightBar.onValueChanged.AddListener((float val) => ScrollbarCallbackHeight(val));
-        fieldWidth = widthBar.GetComponent<Scrollbar>().value;
-        fieldHeight = heightBar.GetComponent<Scrollbar>().value;
+        fieldWidth = widthBar.value;
+        fieldHeight = heightBar.value;
         widthFieldNumber = (int)(fieldWidth * 4 + 2);
         heightFieldNumber = (int)(fieldHeight * 4 + 2);
-
         ChangeFieldSize();
     }
 
     private void ScrollbarCallbackWidth(float value)
     {
-        fieldWidth = widthBar.GetComponent<Scrollbar>().value;
+        fieldWidth = widthBar.value;
         int oldWidthFieldNumber = widthFieldNumber;
         widthFieldNumber = (int)(fieldWidth * 4 + 2);
-        if (oldWidthFieldNumber != widthFieldNumber)
-        {
-            ChangeFieldSize();
-        }
+        if (oldWidthFieldNumber != widthFieldNumber) ChangeFieldSize();
     }
     private void ScrollbarCallbackHeight(float value)
     {
-        fieldHeight = heightBar.GetComponent<Scrollbar>().value;
+        fieldHeight = heightBar.value;
         int oldHeightFieldNumber = heightFieldNumber;
         heightFieldNumber = (int)(fieldHeight * 4 + 2);
-        if (oldHeightFieldNumber != heightFieldNumber)
-        {
-            ChangeFieldSize();
-        }
+        if (oldHeightFieldNumber != heightFieldNumber) ChangeFieldSize();
 
     }
     private void SpawnCells()
@@ -60,45 +53,35 @@ public class GameController : MonoBehaviour
         {
             for (int j = 0; j < heightFieldNumber; j++)
             {
-                float xPos = (-transform.lossyScale.x + offset + cellSize) / 2 + squareContainer.transform.position.x + (cellSize + offset) * i;
-                float yPos = (transform.lossyScale.y - offset - cellSize) / 2 + squareContainer.transform.position.y + (cellSize + offset) * -j;
-                Vector3 cellPos = new Vector3(xPos, yPos, 0);
-                GameObject cell = Instantiate(square, cellPos, Quaternion.identity);
-                cellsToSolve.Add(cell);
-                //cell.transform.SetParent(squareContainer.transform);
+                float xPos = (-cellContainer.transform.lossyScale.x + offset + cellSize) / 2 + cellContainer.transform.position.x + (cellSize + offset) * i;
+                float yPos = (cellContainer.transform.lossyScale.y - offset - cellSize) / 2 + cellContainer.transform.position.y + (cellSize + offset) * -j;
+                GameObject cellToSpawn = Instantiate(cell, new Vector3(xPos, yPos, 0), Quaternion.identity);
+                cellsToSolve.Add(cellToSpawn);
             }
         }
     }
     private void ChangeFieldSize()
     {
-        cellSize = square.transform.localScale.x;
+        cellSize = cell.transform.localScale.x;
         offset = cellSize / 4;
         float scaleModifer = targetScale / (cellSize * 6 + offset * 6);
-        transform.localScale = new Vector2(((cellSize + offset) * widthFieldNumber + offset) * scaleModifer, ((cellSize + offset) * heightFieldNumber + offset) * scaleModifer);
+        cellContainer.transform.localScale = new Vector2(((cellSize + offset) * widthFieldNumber + offset) * scaleModifer, ((cellSize + offset) * heightFieldNumber + offset) * scaleModifer);
         SpawnCells();
     }
     private void ClearLevel()
     {
-        foreach (var cell in cellsToSolve)
-        {
-            Destroy(cell);
-        }
+        foreach (var cell in cellsToSolve) Destroy(cell);
         cellsToSolve.Clear();
-        foreach (var cell in cellsToDrag)
-        {
-            Destroy(cell);
-        }
+        foreach (var cell in cellsToDrag) Destroy(cell);
         cellsToDrag.Clear();
-        numbersList.Clear();
+        usedNumbersToSolveList.Clear();
+        movedNumbersList.Clear();
     }
     public void StartLevel()
     {
-        startButton.GetComponent<Button>().interactable = false;
         SpawnCells();
-        speedBar.GetComponent<Scrollbar>().interactable = false;
-        widthBar.GetComponent<Scrollbar>().interactable = false;
-        heightBar.GetComponent<Scrollbar>().interactable = false;
-        float speed = speedBar.GetComponent<Scrollbar>().value * 9 + 1;
+        speedBar.interactable = widthBar.interactable = heightBar.interactable = startButton.interactable = false;
+        float speed = speedBar.value * 9 + 1;
         IEnumerator coroutine = WaitForSec(speed);
         StartCoroutine(coroutine);
     }
@@ -107,27 +90,28 @@ public class GameController : MonoBehaviour
         SetNumbers();
         yield return new WaitForSeconds(waitTime);
         HideCells();
-        startButton.GetComponent<Button>().interactable = true;
-        checkButton.GetComponent<Button>().interactable = true;
+        startButton.interactable = checkButton.interactable = true;
     }
     private void HideCells()
     {
+        List<GameObject> anotherCellsToDrag = new List<GameObject>();
         foreach (var cellToSolve in cellsToSolve)
         {
-            cellsToDrag.Add(Instantiate(square, cellToSolve.transform.position, Quaternion.identity));
-            cellToSolve.transform.SetParent(squareContainer.transform);
-            cellToSolve.GetComponentInChildren<TMP_Text>().alpha = 0.2f;
+            anotherCellsToDrag.Add(Instantiate(cellToSolve, cellToSolve.transform.position, Quaternion.identity));
+            cellToSolve.transform.SetParent(cellContainer.transform);
+            cellToSolve.GetComponentInChildren<TMP_Text>().alpha = 0.05f;
             cellToSolve.tag = "DropBox";
         }
-        int i = 0;
-        foreach (var cellToDrag in cellsToDrag)
+        for (int i = anotherCellsToDrag.Count - 1; i >= 0; i--)
         {
-            cellToDrag.transform.position = checkSquareContainer.transform.position + new Vector3((cellSize + offset) / 2 + (cellSize + offset) * (i % 2), -(cellSize + offset) / 2 - (cellSize + offset) * (i / 2), 0);
-            cellToDrag.GetComponentInChildren<TMP_Text>().text = cellsToSolve[i].GetComponentInChildren<TMP_Text>().text;
-            cellToDrag.transform.SetParent(checkSquareContainer.transform);
-            i++;
-            cellToDrag.tag = "Draggable";
+            int temp = Random.Range(0, anotherCellsToDrag.Count - 1);
+            GameObject anotherCell = anotherCellsToDrag[temp];
+            anotherCell.transform.position = checkCellContainer.transform.position + new Vector3((cellSize + offset) / 2 + (cellSize + offset) * (i % 3), -(cellSize + offset) / 2 - (cellSize + offset) * (i / 3), 0);
+            anotherCell.tag = "Draggable";
+            cellsToDrag.Add(anotherCell);
+            anotherCellsToDrag.Remove(anotherCell);
         }
+        cellsToDrag.Reverse();
     }
     private void SetNumbers()
     {
@@ -135,13 +119,13 @@ public class GameController : MonoBehaviour
         {
             int temp = Random.Range(0, 99);
             while (CheckEquals(ref temp)) { }
-            numbersList.Add(temp.ToString());
+            usedNumbersToSolveList.Add(temp.ToString());
             cell.GetComponentInChildren<TMP_Text>().text = temp.ToString();
         }
     }
     private bool CheckEquals(ref int temp)
     {
-        foreach (var num in numbersList)
+        foreach (var num in usedNumbersToSolveList)
         {
             if (temp.ToString() == num)
             {
@@ -153,26 +137,44 @@ public class GameController : MonoBehaviour
     }
     public void CheckLevel()
     {
-        speedBar.GetComponent<Scrollbar>().interactable = true;
-        widthBar.GetComponent<Scrollbar>().interactable = true;
-        heightBar.GetComponent<Scrollbar>().interactable = true;
+        speedBar.interactable = widthBar.interactable = heightBar.interactable = true;
         foreach (var cellToSolve in cellsToSolve)
         {
-            bool solved = false;
             foreach (var cellToDrag in cellsToDrag)
             {
-                if(cellToDrag.transform.position == cellToSolve.transform.position)
+                if (cellToDrag.transform.position == cellToSolve.transform.position)
                 {
                     if (cellToDrag.GetComponentInChildren<TMP_Text>().text == cellToSolve.GetComponentInChildren<TMP_Text>().text)
                     {
-                        cellToSolve.GetComponent<SpriteRenderer>().color = Color.green;
-                        solved = true;
+                        cellToDrag.GetComponent<SpriteRenderer>().color = Color.green;
+                    }
+                    else
+                    {
+                        cellToDrag.GetComponent<SpriteRenderer>().color = Color.red;
                     }
                 }
             }
-            if (!solved)
+        }
+    }
+    public void SortElements(GameObject elem)
+    {
+        int movedObjCount = 0;
+        bool found = false;
+        for (int i = 0; i < cellsToDrag.Count; i++)
+        {
+            if(movedNumbersList.Exists((x)=>x==i))
             {
-                cellToSolve.GetComponent<SpriteRenderer>().color = Color.red;
+                movedObjCount++;
+            }
+            else if(found)
+            {
+                cellsToDrag[i].transform.position = checkCellContainer.transform.position + new Vector3((cellSize + offset) / 2 + (cellSize + offset) * ((i-movedObjCount) % 3), -(cellSize + offset) / 2 - (cellSize + offset) * ((i-movedObjCount) / 3), 0);
+            }
+            if(cellsToDrag[i] == elem)
+            {
+                found = true;
+                movedNumbersList.Add(i);
+                movedObjCount++;
             }
         }
     }

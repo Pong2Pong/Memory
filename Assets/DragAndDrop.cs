@@ -6,6 +6,7 @@ using TMPro;
 
 public class DragAndDrop : MonoBehaviour
 {
+    [SerializeField] GameObject objWithGameController;
     private GameObject targetToDrag, targetToDrop = null;
     private bool isMouseDrag;
     Vector3 screenPosition, offset;
@@ -19,6 +20,7 @@ public class DragAndDrop : MonoBehaviour
         }
         return target;
     }
+    
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -43,11 +45,11 @@ public class DragAndDrop : MonoBehaviour
             {
                 if((targetToDrop.tag == "DropBox")&&(isMouseDrag))
                 {
+                    objWithGameController.GetComponent<GameController>().SortElements(targetToDrag);
                     targetToDrag.transform.position = targetToDrop.transform.position;
                 }
             }
             if (targetToDrag != null) targetToDrag.layer = 0;
-            
             isMouseDrag = false;
             targetToDrag = null;
             targetToDrop = null;
