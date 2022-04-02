@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using TMPro;
 
 public class DragAndDrop : MonoBehaviour
@@ -20,14 +17,14 @@ public class DragAndDrop : MonoBehaviour
         }
         return target;
     }
-    
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hitInfoDrag;
             targetToDrag = ReturnClickedObject(out hitInfoDrag);
-            if ((targetToDrag != null)&&(targetToDrag.tag == "Draggable"))
+            if ((targetToDrag != null) && (targetToDrag.tag == "Draggable"))
             {
                 isMouseDrag = true;
                 //Convert world position to screen position.
@@ -41,9 +38,9 @@ public class DragAndDrop : MonoBehaviour
         {
             RaycastHit hitInfoDrop;
             targetToDrop = ReturnClickedObject(out hitInfoDrop);
-            if(targetToDrop!=null) 
+            if (targetToDrop != null)
             {
-                if((targetToDrop.tag == "DropBox")&&(isMouseDrag))
+                if ((targetToDrop.tag == "DropBox") && (isMouseDrag))
                 {
                     objWithGameController.GetComponent<GameController>().SortElements(targetToDrag);
                     targetToDrag.transform.position = targetToDrop.transform.position;
@@ -69,7 +66,7 @@ public class DragAndDrop : MonoBehaviour
     }
     private void CompareText()
     {
-        if(targetToDrag.GetComponentInChildren<TMP_Text>().text == targetToDrop.GetComponentInChildren<TMP_Text>().text)
+        if (targetToDrag.GetComponentInChildren<TMP_Text>().text == targetToDrop.GetComponentInChildren<TMP_Text>().text)
         {
             targetToDrop.GetComponent<SpriteRenderer>().color = Color.green;
         }

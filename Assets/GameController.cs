@@ -162,15 +162,15 @@ public class GameController : MonoBehaviour
         bool found = false;
         for (int i = 0; i < cellsToDrag.Count; i++)
         {
-            if(movedNumbersList.Exists((x)=>x==i))
+            if (movedNumbersList.Exists((x) => x == i))
             {
                 movedObjCount++;
             }
-            else if(found)
+            else if (found)
             {
-                cellsToDrag[i].transform.position = checkCellContainer.transform.position + new Vector3((cellSize + offset) / 2 + (cellSize + offset) * ((i-movedObjCount) % 3), -(cellSize + offset) / 2 - (cellSize + offset) * ((i-movedObjCount) / 3), 0);
+                cellsToDrag[i].transform.position = checkCellContainer.transform.position + new Vector3((cellSize + offset) / 2 + (cellSize + offset) * ((i - movedObjCount) % 3), -(cellSize + offset) / 2 - (cellSize + offset) * ((i - movedObjCount) / 3), 0);
             }
-            if(cellsToDrag[i] == elem)
+            if (cellsToDrag[i] == elem)
             {
                 found = true;
                 movedNumbersList.Add(i);
